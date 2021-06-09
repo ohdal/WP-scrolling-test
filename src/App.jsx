@@ -11,8 +11,9 @@ const height = window.innerHeight - 45; // 헤더높이 빼기
 const scrollSpeed = 200; //몇초동안 이동할것인지
 let exScroll = 0; // 이전 scrollTop 위치 저장
 
-const scrolling = (scrollTop, size, goal, isDown) => {
+const scrolling = (scrollTop, goal, isDown) => {
   const frame = Math.ceil(scrollSpeed * (1 / 15))
+  const size = isDown ? goal - scrollTop : scrollTop - goal
   let scrollY = scrollTop;
 
   const setScrollY = (value, state) => {
@@ -49,14 +50,12 @@ const scrollAuto = (e) => {
   if (scrollTop - exScroll > 0) {
     if (scrollTop % height > 0 && scrollTop % height < 10) {
       const goal = (Math.floor(scrollTop / height) + 1) * height
-      const size = goal - scrollTop
-      scrolling(scrollTop, size, goal, true)
+      scrolling(scrollTop, goal, true)
     }
   } else {
     if (scrollTop % height < height && scrollTop % height > height - 10) {
       const goal = Math.floor(scrollTop / height) * height
-      const size = scrollTop - goal
-      scrolling(scrollTop, size, goal, false)
+      scrolling(scrollTop, goal, false)
     }
   }
 
@@ -64,16 +63,13 @@ const scrollAuto = (e) => {
 }
 
 const App = () => {
-
   return (
       <div className="App">
         <Header/>
         <div className="content">
           <div id={"scrollView"} onScroll={(e) => {scrollAuto(e)}}>
             <Suspense fallback={<div>loading...</div>}>
-              {boxArray.map((item) => {
-                return item;
-              })}
+              {boxArray}
             </Suspense>
           </div>
         </div>
